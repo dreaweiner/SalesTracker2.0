@@ -505,6 +505,40 @@ namespace The_Sales_Tracker
         }
 
         /// <summary>
+        /// queries user to load account information, existing account info displayed
+        /// </summary>
+        /// <param name="salesperson">Salesperson object</param>
+        /// <param name="maxAttemptsExceeded">maximum attempts exceeded flag</param>
+        /// <returns>user choice</returns>
+        public bool DisplayLoadAccountInfo(Salesperson salesperson, out bool maxAttemptsExceeded)
+        {
+            string userResponse;
+            maxAttemptsExceeded = false;
+
+            ConsoleUtil.HeaderText = "Load Account";
+            ConsoleUtil.DisplayReset();
+
+            ConsoleUtil.DisplayMessage("The current account information.");
+            DisplayAccountDetail(salesperson);
+
+            ConsoleUtil.DisplayMessage("");
+            userResponse = ConsoleValidator.GetYesNoFromUser(MAXIMUM_ATTEMPTS, "Load the account information?", out maxAttemptsExceeded);
+
+            if (maxAttemptsExceeded)
+            {
+                ConsoleUtil.DisplayMessage("It appears you are having difficulty. You will return to the main menu.");
+                return false;
+            }
+            else
+            {
+                //
+                // note use of ternary operator
+                //
+                return userResponse == "YES" ? true : false;
+            }
+        }
+
+        /// <summary>
         /// displays a confirmation of account as saved
         /// </summary>
         public void DisplayConfirmSaveAccountInfo()
@@ -562,6 +596,7 @@ namespace The_Sales_Tracker
                     "\t" + "6. Display Cities" + Environment.NewLine +
                     "\t" + "7. Display Account Info" + Environment.NewLine +
                     "\t" + "8. Save Account Info" + Environment.NewLine +
+                    "\t" + "9. Load Account Info" + Environment.NewLine +
                     "\t" + "E. Exit" + Environment.NewLine);
 
                 //
@@ -689,6 +724,42 @@ namespace The_Sales_Tracker
             DisplayContinuePrompt();
         }
 
+        
+        /// <summary>
+        /// displays a confirmation of account and info loaded
+        /// </summary>
+        /// <param name="salesperson">Salesperson object</param>
+        public void DisplayConfirmLoadAccountInfo(Salesperson salesperson)
+        {
+            ConsoleUtil.HeaderText = "Load Account";
+            ConsoleUtil.DisplayReset();
+
+            ConsoleUtil.DisplayMessage("Account information loaded.");
+
+            DisplayAccountDetail(salesperson);
+
+            DisplayContinuePrompt();
+        }
+
+        /// <summary>
+        /// display just the account detail
+        /// </summary>
+        /// <param name="salesperson">Salesperson object</param>
+        private void DisplayAccountDetail(Salesperson salesperson)
+        {
+            ConsoleUtil.DisplayMessage("First Name: " + salesperson.FirstName);
+            ConsoleUtil.DisplayMessage("Last Name: " + salesperson.LastName);
+            ConsoleUtil.DisplayMessage("Account ID: " + salesperson.AccountID);
+            ConsoleUtil.DisplayMessage("Product Type: " + salesperson.CurrentStock.Type);
+            if (!salesperson.CurrentStock.OnBackOrder)
+            {
+                ConsoleUtil.DisplayMessage("Units of Products in Inventory: " + salesperson.CurrentStock.NumberOfUnits);
+            }
+            else
+            {
+                ConsoleUtil.DisplayMessage("Units of Products on Backorder: " + Math.Abs(salesperson.CurrentStock.NumberOfUnits));
+            }
+        }
         #endregion
     }
 }

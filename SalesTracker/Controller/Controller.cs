@@ -114,6 +114,12 @@ namespace The_Sales_Tracker
                     case MenuOption.DisplayAccountInfo:
                         DisplayAccountInfo();
                         break;
+                    case MenuOption.DisplaySaveAccountInfo:
+                        DisplaySaveAccountInfo();
+                        break;
+                    case MenuOption.DisplayLoadAccountInfo:
+                        DisplayLoadAccountInfo();
+                        break;
                     case MenuOption.Exit:
                         _usingApplication = false;
                         break;
@@ -189,6 +195,38 @@ namespace The_Sales_Tracker
                 xmlServices.WriteSalespersonToDataFile(_salesperson);
 
                 _consoleView.DisplayConfirmSaveAccountInfo();
+            }
+        }
+
+        /// <summary>
+        /// load account info
+        /// </summary>
+        private void DisplayLoadAccountInfo()
+        {
+            bool maxAttemptsExceeded = false;
+            bool loadAccountInfo = false;
+
+            //
+            // note: rather than pass null value, method is overloaded
+            //
+            if (_salesperson.AccountID != "")
+            {
+                loadAccountInfo = _consoleView.DisplayLoadAccountInfo(_salesperson, out maxAttemptsExceeded);
+            }
+            else
+            {
+                loadAccountInfo = _consoleView.DisplayLoadAccountInfo(out maxAttemptsExceeded);
+            }
+
+            if (loadAccountInfo && !maxAttemptsExceeded)
+            {
+                //CsvServices csvServices = new CsvServices(DataSettings.dataFilePathCsv);
+                XmlServices xmlServices = new XmlServices(DataSettings.dataFilePathXml);
+
+                //_salesperson = csvServices.ReadSalespersonFromDataFile();
+                _salesperson = xmlServices.ReadSalespersonFromDataFile();
+
+                _consoleView.DisplayConfirmLoadAccountInfo(_salesperson);
             }
         }
 
